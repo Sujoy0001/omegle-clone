@@ -1,0 +1,7 @@
+main_server/.env
+
+socket_server/.env
+socket_server/node_modules/
+
+util_server/.env
+util_server/node_modules/
