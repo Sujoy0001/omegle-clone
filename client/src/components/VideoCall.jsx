@@ -22,7 +22,6 @@ const VideoCall = ({ roomId }) => {
     let mounted = true;
 
     const start = async () => {
-      // 1) local media
       const stream = await navigator.mediaDevices.getUserMedia({
         video: true,
         audio: true,
@@ -33,33 +32,27 @@ const VideoCall = ({ roomId }) => {
       localStream.current = stream;
       localVideo.current.srcObject = stream;
 
-      // 2) peer
       peer.current = new RTCPeerConnection(pcConfig);
 
-      // add tracks
       stream.getTracks().forEach((t) => peer.current.addTrack(t, stream));
 
-      // remote tracks
       peer.current.ontrack = (e) => {
         const [stream] = e.streams;
         remoteStream.current = stream;
         remoteVideo.current.srcObject = stream;
       };
 
-      // ICE
       peer.current.onicecandidate = (e) => {
         if (e.candidate) {
           socket.emit("ice_candidate", { roomId, candidate: e.candidate });
         }
       };
 
-      // 3) join after peer ready
       socket.emit("join_room", roomId);
     };
 
     start();
 
-    // --- signaling listeners ---
     socket.on("user_joined", async () => {
       if (!peer.current) return;
 
@@ -103,7 +96,6 @@ const VideoCall = ({ roomId }) => {
     };
   }, [roomId]);
 
-  // ✅ Toggle Mic
   const toggleMic = () => {
     const stream = localStream.current;
     if (!stream) return;
@@ -114,7 +106,6 @@ const VideoCall = ({ roomId }) => {
     });
   };
 
-  // ✅ Toggle Camera
   const toggleCamera = () => {
     const stream = localStream.current;
     if (!stream) return;
@@ -125,16 +116,13 @@ const VideoCall = ({ roomId }) => {
     });
   };
 
-  // ✅ Toggle Speaker (remote audio)
   const toggleSpeaker = () => {
     if (!remoteVideo.current) return;
     remoteVideo.current.muted = !remoteVideo.current.muted;
     setSpeakerOn(!remoteVideo.current.muted);
   };
 
-  // ✅ End Call
   const endCall = () => {
-    // close peer
     if (peer.current) {
       peer.current.ontrack = null;
       peer.current.onicecandidate = null;
@@ -142,19 +130,16 @@ const VideoCall = ({ roomId }) => {
       peer.current = null;
     }
 
-    // stop local tracks
     if (localStream.current) {
       localStream.current.getTracks().forEach((t) => t.stop());
       localStream.current = null;
     }
 
-    // stop remote tracks (optional)
     if (remoteStream.current) {
       remoteStream.current.getTracks().forEach((t) => t.stop());
       remoteStream.current = null;
     }
 
-    // clear video elements
     if (localVideo.current) localVideo.current.srcObject = null;
     if (remoteVideo.current) remoteVideo.current.srcObject = null;
 
@@ -179,7 +164,6 @@ const VideoCall = ({ roomId }) => {
         </div>
       </div>
 
-      {/* ✅ Controls */}
       <div style={{ marginTop: 16, display: "flex", gap: 10 }}>
         <button onClick={toggleMic}>
           {micOn ? "Mute Mic" : "Unmute Mic"}
