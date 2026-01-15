@@ -4,18 +4,15 @@ import com.main_server.main_server.dto.LogicRequestDto;
 import com.main_server.main_server.dto.LogicResponseDto;
 import com.main_server.main_server.dto.Room;
 import com.main_server.main_server.service.LogicService;
-import org.jspecify.annotations.Nullable;
+import com.main_server.main_server.util.CommonUtil;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
+import java.util.random.RandomGenerator;
 
 @Service
 public class LogicServiceImpl implements LogicService {
-   private Queue<Room> queue = new LinkedList<>();
-
+   private final Queue<Room> queue = new LinkedList<>();
 
     @Override
     public LogicResponseDto assignRoom(LogicRequestDto logicRequestDto) {
@@ -27,7 +24,7 @@ public class LogicServiceImpl implements LogicService {
                 room.setUserId2(logicRequestDto.getUserId1());
                 roomList.add(room);
             } else{
-                Room room = Room.builder().userId1(logicRequestDto.getUserId1()).build();
+                Room room = Room.builder().userId1(logicRequestDto.getUserId1()).roomId(CommonUtil.generateUniqueId()).build();
                 queue.add(room);
             }
         } else{
@@ -37,8 +34,8 @@ public class LogicServiceImpl implements LogicService {
                 room.setUserId2(logicRequestDto.getUserId1());
                 roomList.add(room);
             } else{
-                Room room1 = Room.builder().userId1(logicRequestDto.getUserId1()).build();
-                Room room2 = Room.builder().userId1(logicRequestDto.getUserId2()).build();
+                Room room1 = Room.builder().userId1(logicRequestDto.getUserId1()).roomId(CommonUtil.generateUniqueId()).build();
+                Room room2 = Room.builder().userId1(logicRequestDto.getUserId2()).roomId(CommonUtil.generateUniqueId()).build();
                 queue.add(room1);
                 queue.add(room2);
                 isRoomCreatedForUserId2 = true;
@@ -50,7 +47,7 @@ public class LogicServiceImpl implements LogicService {
                     room.setUserId2(logicRequestDto.getUserId2());
                     roomList.add(room);
                 }else {
-                    Room room = Room.builder().userId1(logicRequestDto.getUserId2()).build();
+                    Room room = Room.builder().userId1(logicRequestDto.getUserId2()).roomId(CommonUtil.generateUniqueId()).build();
                     queue.add(room);
                 }
             }

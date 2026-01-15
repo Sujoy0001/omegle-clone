@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 @Builder
 public class Room {
+    private String roomId;
     private String userId1;
     private String userId2;
 }

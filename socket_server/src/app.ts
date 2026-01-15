@@ -1,5 +1,6 @@
 import express, { type Application } from 'express';
 import cors from 'cors';
+import errorHandler from "./middlewares/error.middleware.js";
 
 const app : Application = express();
 app.use(cors({
@@ -10,8 +11,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
+import userRoutes from './routes/user.route.js';
+app.use('/api/v2/user', userRoutes);
+
 app.get('/', (req, res) => {
   res.json({ message: 'Socket Server is running' });
 });
+
+app.use(errorHandler);
 
 export default app;
