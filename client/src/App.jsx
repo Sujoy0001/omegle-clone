@@ -1,16 +1,23 @@
 import { useState, useEffect } from "react";
 import VideoCall from "./components/VideoCall";
 import {socket} from "./socket/socket.js";
+import TakeData from "./components/TakeData.jsx";
+import useRoomStore from "./store/roomStore.js";
 
 function App() {
   const [roomId, setRoomId] = useState(null);
+      const { setRoomId: setRoomIdStore, setPeer } = useRoomStore();
 
   useEffect(() => {
     const onMatchFound = (payload) => {
       console.log("match_found payload:", payload);
 
-      // your server sends: { roomId, userDetails1, userDetails2 }
+      // your server sends: { roomId, userId, peer }
       const rid = payload?.roomId;
+      setRoomIdStore(rid);
+      const userId2 = payload?.peer;
+      setPeer(userId2);
+      console.log("Extracted roomId:", rid);
       if (!rid) return;
 
       setRoomId(rid);
@@ -30,8 +37,7 @@ function App() {
       {!roomId ? (
         <div>
           <h2>Waiting for match...</h2>
-          {/* Here you should call your REST API to enter queue */}
-          {/* Example: POST /user/set -> logic server -> emits match_found */}
+          <TakeData />
         </div>
       ) : (
         <VideoCall roomId={roomId} />
