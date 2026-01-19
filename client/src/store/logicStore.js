@@ -21,6 +21,22 @@ const useLogicStore = create((set, get) => ({
             set({ isLoading: false, error: error.message });
             throw error;
         }
+    },
+
+    endVideoCall: async (callData) => {
+        set({ isLoading: true, error: null });
+        try {
+            const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}/api/v2/logic/end-call`, callData);
+            if (response.data) {
+                set({ message: response.data, isLoading: false });
+            } else {
+                set({ isLoading: false, error: "No data received from server" });
+                throw new Error("No data received from server");
+            }   
+        } catch (error) {
+            set({ isLoading: false, error: error.message });
+            throw error;
+        }
     }
 
 }));

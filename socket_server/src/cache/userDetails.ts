@@ -13,11 +13,11 @@ const getUserDetails = (userId: string): User | null => {
 };
 
 const setUserDetails = (userId: string, userDetails: User): void => {
-    if(userDetailsCache.has(userId)) {
-        throw new ApiError(400, "User details already exist for this ID", [
-            { field: "id", message: "User ID already exists" }
-        ]);
-    }
+    // if(userDetailsCache.has(userId)) {
+    //     throw new ApiError(400, "User details already exist for this ID", [
+    //         { field: "id", message: "User ID already exists" }
+    //     ]);
+    // }
     userDetailsCache.set(userId, userDetails);
 };
 

@@ -43,5 +43,17 @@ const machingLogicController = asyncHandler(async (req: Request, res: Response, 
 
 });
 
+const endVideoCallController = asyncHandler(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const { roomId, userId }: { roomId: string; userId: string } = req.body;
+    if (!roomId || !userId) {
+        throw new ApiError(400, "roomId and userId are required");
+    }
 
-export { machingLogicController };
+    io.to(userId).emit("call_ended", { roomId, userId });
+    console.log(`Emitted call_ended to roomId: ${roomId} by userId: ${userId}`);
+
+    res.status(200).json(new ApiResponse(200, { roomId, userId }, "Video call ended successfully"));
+});
+
+
+export { machingLogicController, endVideoCallController  };

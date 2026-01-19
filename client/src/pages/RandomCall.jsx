@@ -28,7 +28,7 @@ const RandomCall = () => {
     const remoteStream = useRef(null);
 
     const { userId, peer: peerDetails, roomId, bumpMatchCycle } = useRoomStore();
-    const { fetchRoomList } = useLogicStore();
+    const { fetchRoomList, endVideoCall:endCallAPI } = useLogicStore();
 
     const navigate = useNavigate();
 
@@ -155,12 +155,18 @@ const RandomCall = () => {
 
     const endVideoCall = async () => {
         await endCall();
+        try {
+            await endCallAPI({ roomId, userId: peerDetails?.id });
+        } catch (error) {
+            console.error("Error ending call:", error);
+        }
         await navigate('/');
     }
 
     const nextCall = async () => {
         try {
             await endCall();
+            await endCallAPI({ roomId, userId: peerDetails?.id });
             const roomList = await fetchRoomList({ userId1: userId, userId2: peerDetails?.id, roomId: roomId });
             console.log("Room List:", roomList);
             bumpMatchCycle();

@@ -1,6 +1,15 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import { socket } from '../socket/socket';
 
-const VideoShow = ({isOpenMessage, remoteVideo, localVideo, peerDetails}) => {
+const VideoShow = ({ isOpenMessage, remoteVideo, localVideo, peerDetails }) => {
+    useEffect(() => {
+        const callEnd = (data) => {
+            console.log("Call ended by peer", data);
+            // Handle call end logic here, e.g., navigate to another page or show a message
+        };
+        socket.on("call_ended", callEnd);
+    }, [])
+
     return (
         <div className={`videoCall ${isOpenMessage ? "w-[73%]" : "w-[90%]"} relative h-full border rounded-2xl overflow-hidden`}>
             <div className="remortVideo w-full h-full flex justify-center items-center">
