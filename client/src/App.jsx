@@ -19,7 +19,6 @@ function App() {
       console.log("Extracted roomId:", roomId);
       if (!roomId) return;
 
-      socket.emit("join_room", roomId);
       navigate("/call");
     };
 
