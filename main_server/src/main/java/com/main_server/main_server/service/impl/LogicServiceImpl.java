@@ -15,9 +15,6 @@ public class LogicServiceImpl implements LogicService {
     private final Map<String, Map<String, Long>> recent = new HashMap<>();
     private final long COOLDOWN_MS = 60_000; // 1 min
 
-    private final Set<String> roomData = new HashSet<>();
-    private final Object lock = new Object();
-
     public boolean isAllowed(LogicRequestDto currentUser, String candidate) {
         if (recent.get(currentUser.getUserId1()) != null) {
             if (recent.get(currentUser.getUserId1()).containsKey(candidate)) {
@@ -38,21 +35,14 @@ public class LogicServiceImpl implements LogicService {
 
     public boolean removeIfExist(LogicRequestDto logicRequestDto){
         String targetUserId = logicRequestDto.getUserId1();
-        boolean removed = false;
 
-        List<Room> kept = new ArrayList<>();
-
-        while(!queue.isEmpty()){
-            Room room = queue.poll();
-
-            if (targetUserId.equals(room.getUserId1())){
-                removed = true;
-                continue;
+        for(Room room: queue){
+            if(targetUserId.equals(room.getUserId1())){
+                return true;
             }
-            kept.add(room);
         }
-        queue.addAll(kept);
-        return removed;
+
+        return false;
     }
 
     @Override
@@ -60,13 +50,11 @@ public class LogicServiceImpl implements LogicService {
         List<Room> roomList = new ArrayList<>();
         List<Room> skipped = new ArrayList<>();
 
-        synchronized (lock) {
-            if (!roomData.add(logicRequestDto.getUserId1())) {
-                return LogicResponseDto.builder().roomList(roomList).build();
-            }
+        if(removeIfExist(logicRequestDto)){
+            return LogicResponseDto.builder()
+                    .roomList(roomList)
+                    .build();
         }
-
-        removeIfExist(logicRequestDto);
 
         Room found = null;
         String candidate = null;
