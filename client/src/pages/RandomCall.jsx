@@ -15,7 +15,7 @@ import useLogicStore from '../store/logicStore.js';
 import { useIsConnected } from '../contexts/isConnectedContext.jsx';
 
 const RandomCall = () => {
-    const [isOpenMessage, setIsOpenMessage] = useState(false)
+    const [isOpenMessage, setIsOpenMessage] = useState(true)
     const [peerObj, setPeerObj] = useState(null);
     const [micOn, setMicOn] = useState(true);
     const [camOn, setCamOn] = useState(true);
