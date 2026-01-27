@@ -12,7 +12,6 @@ const useMessageStore = create((set) => ({
     },
     clearMessages: () => set({ messages: [] }),
     sendMessage: async (messageData) => {
-        console.log("Sending message data:", messageData);
         set({ isLoading: true, error: null });
         try {
             const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}/api/v2/message/send`, messageData);

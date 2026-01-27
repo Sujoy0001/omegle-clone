@@ -5,7 +5,7 @@ import useUserStore from '../store/userStore';
 import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
-    const { userId } = useRoomStore();
+    const { userId, setUserDetails: setUserData } = useRoomStore();
     const { createUser } = useUserStore();
     const [userDetails, setUserDetails] = useState({
         name: "",
@@ -13,15 +13,14 @@ const Home = () => {
     })
     const navigate = useNavigate();
     const handleChange = async () => {
-        console.log(userDetails);
         if (!userDetails.name || !userDetails.gender) {
             alert("Please enter all details");
             return;
         }
         try {
-            const user = await createUser({ id: userId, name: userDetails.name, gender: userDetails.gender });
+            await createUser({ id: userId, name: userDetails.name, gender: userDetails.gender });
+            setUserData(userDetails);
             navigate("/call");
-            console.log("User created:", user);
         } catch (error) {
             console.error("Error creating user:", error);
         }

@@ -102,7 +102,7 @@ const RandomCall = () => {
             try {
                 await peer.current.addIceCandidate(new RTCIceCandidate(candidate));
             } catch (err) {
-                console.log("ICE add error", err);
+                console.error("ICE add error", err);
             }
         });
 
@@ -160,7 +160,6 @@ const RandomCall = () => {
     const endVideoCall = async () => {
         await endCall();
         try {
-            console.log({ roomId, peerId: peerDetails?.id, userId, isEnd: true })
             await endCallAPI({ roomId, peerId: peerDetails?.id, userId, isEnd: true });
             socket.emit("leave_room", userId);
             clearMessages();
@@ -174,9 +173,7 @@ const RandomCall = () => {
         try {
             await setIsConnected(true);
             await endCall();
-            const roomList = await fetchRoomList({ userId1: userId });
-            console.log("Room List:", roomList);
-            console.log({ roomId, peerId: peerDetails?.id, userId, isEnd: false })
+            await fetchRoomList({ userId1: userId });
             await endCallAPI({ roomId, peerId: peerDetails?.id, userId, isEnd: false });
             clearMessages();
             bumpMatchCycle();

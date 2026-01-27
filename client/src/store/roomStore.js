@@ -2,6 +2,13 @@ import { create } from "zustand";
 
 const useRoomStore = create((set, get) => ({
     userId: null,
+    userDetails: null,
+    setUserDetails: (details) => {
+        set({ userDetails: details })
+    },
+    getUserDetails: () => {
+        return get().userDetails
+    },
     setUserId: (id) => {
         set({ userId: id })
     },

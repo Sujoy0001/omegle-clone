@@ -8,7 +8,6 @@ import { socket } from '../socket/socket.js'
 const MessageContainer = ({ setIsOpenMessage }) => {
     const [text, setText] = useState('')
     const messages = useMessageStore((state) => state.messages);
-    // const [messages, setMessages] = useState([])
     const sendMessage = useMessageStore((state) => state.sendMessage);
     const addMessage = useMessageStore((state) => state.addMessage);
 
@@ -16,21 +15,6 @@ const MessageContainer = ({ setIsOpenMessage }) => {
 
     useEffect(() => {
         const onNewMessage = (payload) => {
-            // payload = { receiverId, message }
-            console.log("New message received:", payload);
-            // Optional: filter by room
-            // if (payload.receiverId !== getPeer()) return;
-
-            // setMessages((prevMessages) => [
-            //     ...prevMessages,
-            //     {
-            //         id: payload.receiverId,
-            //         content: payload.message,
-            //         sender: 'peer',
-            //         timestamp: new Date().toISOString()
-            //     }
-            // ]);
-
             addMessage({
                 id: payload.receiverId,
                 content: payload.message,
@@ -59,12 +43,7 @@ const MessageContainer = ({ setIsOpenMessage }) => {
 
         try {
             const {id} = getPeer();
-            console.log("Sending message to receiverId:", id);
-            const response = await sendMessage({ message: message, receiverId: id });
-            // setMessages((prevMessages) => [
-            //     ...prevMessages,
-            //     userMessage
-            // ]);
+            await sendMessage({ message: message, receiverId: id });
             addMessage(userMessage);
         } catch (error) {
             console.error("Failed to send message:", error);

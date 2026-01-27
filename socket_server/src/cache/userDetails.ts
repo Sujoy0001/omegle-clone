@@ -40,6 +40,10 @@ const removeUserDetails = (userId: string): void => {
     userDetailsCache.delete(userId);
 };
 
+const removeUserDetailsSafe = (userId: string): boolean => {
+  return userDetailsCache.delete(userId);
+};
+
 const isUserExist = (userId: string): boolean => {
     return userDetailsCache.has(userId);
 };
@@ -49,5 +53,6 @@ export {
     setUserDetails,
     removeUserDetails,
     updateUserDetails,
-    isUserExist
+    isUserExist,
+    removeUserDetailsSafe
 };

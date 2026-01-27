@@ -7,18 +7,16 @@ import useMessageStore from '../store/messageStore';
 
 const VideoShow = ({ isOpenMessage, remoteVideo, localVideo, peerDetails }) => {
     const { isConnected, setIsConnected } = useIsConnected()
-    const { userId, peer, roomId, bumpMatchCycle } = useRoomStore();
+    const { userId, peer, roomId, bumpMatchCycle, getUserDetails } = useRoomStore();
     const { fetchRoomList, endVideoCall: endCallAPI } = useLogicStore();
     const clearMessages = useMessageStore((state) => state.clearMessages);
     useEffect(() => {
         const callEnd = async (data) => {
             const {isExist} = data;
-            console.log("Call ended by peer",{data, isExist});
             await setIsConnected(true);
 
             if(isExist){
-                const roomList = await fetchRoomList({ userId1: userId });
-                console.log("Room List:", roomList);
+                await fetchRoomList({ userId1: userId });
             }
             clearMessages();
         };
@@ -35,6 +33,9 @@ const VideoShow = ({ isOpenMessage, remoteVideo, localVideo, peerDetails }) => {
             </div>
             <div className={`localVideo ${isOpenMessage ? "h-[30%] w-[30%]" : "h-[35%] w-[30%]"} z-10 absolute bottom-4 right-4 border rounded-2xl overflow-hidden`}>
                 <video ref={localVideo} autoPlay muted playsInline className='localVideoElement w-full h-full object-contain rounded-2xl'></video>
+                <div className="nameUser absolute top-4 left-4 bg-gray-300 px-4 py-2 rounded-2xl">
+                { getUserDetails()?.name || "John Doe"}
+            </div>
             </div>
             <div className="nameUser absolute top-4 left-4 bg-gray-300 px-4 py-2 rounded-2xl">
                 {peerDetails?.name || "John Doe"}

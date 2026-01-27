@@ -16,10 +16,8 @@ const sendMessageController = asyncHandler(async (req: Request, res: Response, n
     if (!receiverId || !message) {
         throw new ApiError(400, "receiverId and message are required");
     }
-    console.log({ receiverId, message });
 
     io.to(receiverId).emit("new_message", { receiverId, message });
-    console.log(`Emitted new_message to receiverId: ${receiverId}`);
 
     res.status(200).json(new ApiResponse(200, null, "Message sent successfully"));
 });

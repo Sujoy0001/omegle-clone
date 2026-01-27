@@ -1,6 +1,7 @@
 import { Server, Socket } from 'socket.io';
 import http from 'http';
 import app from '../app.js';
+import { removeUserDetailsSafe } from '../cache/userDetails.js';
 
 const server: http.Server = http.createServer(app);
 const io: Server = new Server(server, {
@@ -22,32 +23,42 @@ io.on('connection', (socket: Socket): void => {
     socket.on("join_room", (roomId: string): void => {
         socket.join(roomId);
         socket.to(roomId).emit("user_joined", { userId });
-
-        console.log(`Client ${userId} joined room ${roomId}`);
     })
 
     socket.on("offer", ({ offer, roomId }: { offer: RTCSessionDescriptionInit, roomId: string }): void => {
         socket.to(roomId).emit("offer", { from: userId, offer });
-
-        console.log(`Offer from ${userId} sent to room ${roomId}`);
     });
 
     socket.on("answer", ({ answer, roomId }: { answer: RTCSessionDescriptionInit, roomId: string }): void => {
         socket.to(roomId).emit("answer", { from: userId, answer });
-        console.log(`Answer from ${userId} sent to room ${roomId}`);
     });
 
     socket.on("ice_candidate", ({ candidate, roomId }: { candidate: RTCIceCandidateInit, roomId: string }): void => {
         socket.to(roomId).emit("ice_candidate", { from: userId, candidate });
-        console.log(`ICE candidate from ${userId} sent to room ${roomId}`);
     });
 
     socket.on("leave_room", (userId): void => {
         socket.leave(userId);
     });
 
-    socket.on('disconnect', (): void => {
-        console.log(`Client disconnected: ${userId}`);
+    socket.on('disconnect', async (): Promise<void> => {
+        try {
+            socket.leave(userId);
+
+            removeUserDetailsSafe(userId);
+
+            await fetch(`${process.env.SERVER_URL}/logic/remove`, {
+                method: "DELETE",
+                headers: { 
+                    "Content-Type": "application/json" 
+                },
+                body: JSON.stringify({ userId1: userId }),
+            }).catch(() => { });
+
+            console.log(`Client disconnected: ${userId}`);
+        } catch (err) {
+            console.error("disconnect cleanup error:", err);
+        }
     });
 
 });

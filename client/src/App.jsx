@@ -11,18 +11,14 @@ function App() {
 
   useEffect(() => {
     const onMatchFound = async (payload) => {
-      // console.log("match_found payload:", payload);
 
       const roomId = payload?.roomId;
       setRoomId(roomId);
       const peer = payload?.peer;
-      console.log("Extracted peer:", peer);
       setPeer(peer);
-      console.log("Extracted roomId:", roomId);
       if (!roomId) return;
 
       await setIsConnected(false);
-      console.log("Set isConnected to false");
       navigate("/call");
     };
 
