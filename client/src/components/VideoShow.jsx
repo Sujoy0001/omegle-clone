@@ -9,8 +9,8 @@ import { useIsOpenMessage } from '../contexts/isOpenMessageContext';
 
 const VideoShow = ({ remoteVideo, localVideo, peerDetails }) => {
     const { isConnected, setIsConnected } = useIsConnected()
-    const { userId, peer, roomId, bumpMatchCycle, getUserDetails } = useRoomStore();
-    const { fetchRoomList, endVideoCall: endCallAPI } = useLogicStore();
+    const { userId, getUserDetails } = useRoomStore();
+    const { fetchRoomList } = useLogicStore();
     const clearMessages = useMessageStore((state) => state.clearMessages);
     const { theme } = useTheme()
     const { isOpenMessage, setIsOpenMessage } = useIsOpenMessage()
