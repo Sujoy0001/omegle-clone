@@ -8,11 +8,13 @@ import Home from './pages/Home.jsx'
 import IsConnectedContextProvider from './contexts/isConnectedContext.jsx'
 import ThemeContextProvider from './contexts/themeContext.jsx'
 import IsOpenMessageContextProvider from './contexts/isOpenMessageContext.jsx'
+import Loading from './components/Loading.jsx'
+import Error from './pages/Error.jsx'
 
 const router = createBrowserRouter([
   {
     path: "/",
-    // errorElement : <Error />,
+    errorElement : <Error />,
     element: <App />,
     children: [
       {
@@ -22,6 +24,10 @@ const router = createBrowserRouter([
       {
         path: "/call",
         element: <RandomCall />
+      },
+      {
+        path: "/loading",
+        element: <Loading />
       }
     ]
   }

@@ -4,12 +4,15 @@ import useRoomStore from "./store/roomStore.js";
 import { Outlet, useNavigate } from "react-router-dom";
 import { useIsConnected } from "./contexts/isConnectedContext.jsx";
 import { useIsOpenMessage } from "./contexts/isOpenMessageContext.jsx";
+import Loading from "./components/Loading.jsx";
+import useWakeUpStore from "./store/wakeUpStore.js";
+import Error from "./pages/Error.jsx";
 
 function App() {
   const { setRoomId, setPeer, matchCycle } = useRoomStore();
-  const navigate = useNavigate();
   const { isConnected, setIsConnected } = useIsConnected()
   const { isOpenMessage, setIsOpenMessage } = useIsOpenMessage()
+  const {mainServerWakeUp, socketServerWakeUp, isLoading, error} = useWakeUpStore();
 
   useEffect(() => {
     const onMatchFound = async (payload) => {
@@ -29,6 +32,27 @@ function App() {
       socket.off("match_found", onMatchFound);
     };
   }, [matchCycle, setIsConnected, setIsOpenMessage, setRoomId, setPeer]);
+
+  useEffect(() => {
+    const wakeUpServers = async () => {
+      try {
+        await mainServerWakeUp();
+        await socketServerWakeUp();
+      } catch (error) {
+        console.error("Error waking up servers:", error);
+      }
+    };
+
+    wakeUpServers();
+  }, [])
+
+  if(isLoading){
+    return <Loading />;
+  }
+  
+  if(error){
+    return <Error />;
+  }
 
   return (
     <div>
