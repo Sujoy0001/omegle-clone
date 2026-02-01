@@ -12,11 +12,17 @@ function App() {
   const { setRoomId, setPeer, matchCycle } = useRoomStore();
   const { isConnected, setIsConnected } = useIsConnected()
   const { isOpenMessage, setIsOpenMessage } = useIsOpenMessage()
-  const {mainServerWakeUp, socketServerWakeUp, isLoading, error} = useWakeUpStore();
+
+  const {
+    socket : socketState,
+    main,
+    mainServerWakeUp,
+    socketServerWakeUp,
+  } = useWakeUpStore();
 
   useEffect(() => {
     const onMatchFound = async (payload) => {
-      setIsOpenMessage((v) => ({...v, isOn: true, onClickIsOn: true }));
+      setIsOpenMessage((v) => ({ ...v, isOn: true, onClickIsOn: true }));
       const roomId = payload?.roomId;
       setRoomId(roomId);
       const peer = payload?.peer;
@@ -36,8 +42,10 @@ function App() {
   useEffect(() => {
     const wakeUpServers = async () => {
       try {
-        await mainServerWakeUp();
-        await socketServerWakeUp();
+        await Promise.allSettled([
+          mainServerWakeUp(),
+          socketServerWakeUp()
+        ]);
       } catch (error) {
         console.error("Error waking up servers:", error);
       }
@@ -46,17 +54,17 @@ function App() {
     wakeUpServers();
   }, [])
 
-  if(isLoading){
+  if (socketState.isLoading || main.isLoading) {
     return <Loading />;
   }
-  
-  if(error){
+
+  if (socketState.error || main.error) {
     return <Error />;
   }
 
   return (
     <div>
-      <Suspense>
+      <Suspense fallback={<Loading />}>
         <Outlet />
       </Suspense>
     </div>
