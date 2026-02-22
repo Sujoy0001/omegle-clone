@@ -11,7 +11,7 @@ import Error from "./pages/Error.jsx";
 function App() {
   const { setRoomId, setPeer, matchCycle } = useRoomStore();
   const { isConnected, setIsConnected } = useIsConnected()
-  const { isOpenMessage, setIsOpenMessage } = useIsOpenMessage()
+  const { setIsOpenMessage } = useIsOpenMessage()
 
   const {
     socket : socketState,
